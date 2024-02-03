@@ -1,25 +1,57 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Snackbar from "@mui/material/Snackbar";
+import List from "./pages/List";
+import Issue from "./pages/Issue";
 
 function App() {
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleOpenSnackbar = (error: string) => {
+    setOpen(true);
+    setError(error);
+  };
+
+  const handleCloseSnackbar = (
+    _event: React.SyntheticEvent | Event,
+    _reason?: string
+  ) => {
+    setOpen(false);
+    setError("");
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Router>
+        <Routes>
+          <Route
+            index
+            element={
+              <List
+                onOpenSnackbar={handleOpenSnackbar}
+                onCloseSnackbar={handleCloseSnackbar}
+              />
+            }
+          />
+          <Route
+            path="/:issue_number"
+            element={
+              <Issue
+                onOpenSnackbar={handleOpenSnackbar}
+                onCloseSnackbar={handleCloseSnackbar}
+              />
+            }
+          />
+        </Routes>
+      </Router>
+      <Snackbar
+        open={open}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+        message={error}
+      />
+    </>
   );
 }
 
